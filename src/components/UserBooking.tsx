@@ -73,10 +73,9 @@ export default function UserBooking() {
     }
   };
 
-  const handleTableSelect = (table: RestaurantTable) => {
+  const handleTableSelect = (table: RestaurantTable, timeSlot: string) => {
     setSelectedTable(table);
-    // Reset time slot selection when changing tables
-    setSelectedTimeSlot('');
+    setSelectedTimeSlot(timeSlot);
   };
 
   const handleBookingSubmit = async (bookingData: BookingFormData) => {
@@ -109,10 +108,10 @@ export default function UserBooking() {
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-6 customer-booking">
       <div className="text-center mb-6 sm:mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">Reserve Your Table</h1>
-        <p className="text-gray-600 text-sm sm:text-base">Select an available table and time slot to make your reservation</p>
+        <h1 className="text-3xl sm:text-4xl font-bold text-[#1B5E20] mb-2">Reserve Your Table</h1>
+        <p className="text-[#2E2E2E] text-sm sm:text-base">Select an available table and time slot to make your reservation</p>
       </div>
 
       {/* Carousel Section */}
@@ -134,31 +133,31 @@ export default function UserBooking() {
 
       <div className="bg-white rounded-lg shadow p-4 sm:p-6">
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
+          <label className="block text-sm font-medium text-[#2E2E2E] mb-2">Select Date</label>
           <input
             type="date"
             value={selectedDate}
             onChange={handleDateChange}
             min={new Date().toISOString().split('T')[0]}
-            className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+            className="px-3 py-2 border border-[#4CAF50] rounded-md shadow-sm focus:outline-none focus:ring-[#1B5E20] focus:border-[#1B5E20] sm:text-sm"
           />
         </div>
 
-        <div className="flex items-center gap-4 sm:gap-6 mb-4 sm:mb-6 pb-3 sm:pb-4 border-b">
+        <div className="flex items-center gap-4 sm:gap-6 mb-4 sm:mb-6 pb-3 sm:pb-4 border-b border-[#4CAF50]">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 sm:w-4 sm:h-4 bg-green-500 rounded"></div>
-            <span className="text-xs sm:text-sm font-medium text-gray-700">Available</span>
+            <div className="w-3 h-3 sm:w-4 sm:h-4 bg-[#4CAF50] rounded"></div>
+            <span className="text-xs sm:text-sm font-medium text-[#2E2E2E]">Available</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 sm:w-4 sm:h-4 bg-red-500 rounded"></div>
-            <span className="text-xs sm:text-sm font-medium text-gray-700">Booked</span>
+            <span className="text-xs sm:text-sm font-medium text-[#2E2E2E]">Booked</span>
           </div>
         </div>
 
         {loading ? (
-          <div className="text-center py-8 sm:py-12 text-gray-500 text-sm sm:text-base">Loading tables...</div>
+          <div className="text-center py-8 sm:py-12 text-[#2E2E2E] text-sm sm:text-base">Loading tables...</div>
         ) : tables.length === 0 ? (
-          <div className="text-center py-8 sm:py-12 text-gray-500 text-sm sm:text-base">
+          <div className="text-center py-8 sm:py-12 text-[#2E2E2E] text-sm sm:text-base">
             No tables available at the moment. Please check back later.
           </div>
         ) : (
@@ -172,70 +171,6 @@ export default function UserBooking() {
       </div>
 
       <FoodMenu />
-
-      {selectedTable && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-            <div className="p-4 border-b">
-              <h3 className="text-lg font-semibold">Book Table {selectedTable.table_number}</h3>
-            </div>
-            <div className="p-4">
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select Time Slot *
-                </label>
-                <select
-                  value={selectedTimeSlot}
-                  onChange={(e) => setSelectedTimeSlot(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
-                >
-                  <option value="">Choose a time slot</option>
-                  {/* Time slots from 10 AM to 11 PM */}
-                  <option value="10:00">10:00 AM</option>
-                  <option value="11:00">11:00 AM</option>
-                  <option value="12:00">12:00 PM</option>
-                  <option value="13:00">1:00 PM</option>
-                  <option value="14:00">2:00 PM</option>
-                  <option value="15:00">3:00 PM</option>
-                  <option value="16:00">4:00 PM</option>
-                  <option value="17:00">5:00 PM</option>
-                  <option value="18:00">6:00 PM</option>
-                  <option value="19:00">7:00 PM</option>
-                  <option value="20:00">8:00 PM</option>
-                  <option value="21:00">9:00 PM</option>
-                  <option value="22:00">10:00 PM</option>
-                  <option value="23:00">11:00 PM</option>
-                </select>
-              </div>
-              <div className="flex justify-end gap-3">
-                <button
-                  onClick={() => {
-                    setSelectedTable(null);
-                    setSelectedTimeSlot('');
-                  }}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    if (selectedTimeSlot) {
-                      // Close the modal - the BookingForm will be rendered below with the selected time slot
-                      setSelectedTable(null);
-                    } else {
-                      alert('Please select a time slot');
-                      return;
-                    }
-                  }}
-                  className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700"
-                >
-                  Continue
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {selectedTable && selectedTimeSlot && (
         <BookingForm
