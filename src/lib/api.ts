@@ -5,9 +5,9 @@ const getApiBaseUrl = () => {
   if (typeof window !== 'undefined') {
     // Client-side: Use localhost for development, production URL otherwise
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    return isLocalhost ? 'http://localhost:8080' : 'https://gg-d25n.onrender.com';
+    return isLocalhost ? 'http://localhost:8080' : 'https://backend2-re0m.onrender.com';
   }
-  return 'https://gg-d25n.onrender.com'; // Default to production
+  return 'https://backend2-re0m.onrender.com'; // Default to production
 };
 
 export const API_BASE_URL = getApiBaseUrl();

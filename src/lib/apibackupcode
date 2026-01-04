@@ -1,5 +1,5 @@
 // // Change this in your frontend API calls:
-// export const API_BASE_URL = 'https://gg-d25n.onrender.com';
+// export const API_BASE_URL = 'https://backend2-re0m.onrender.com';
 
 // // Custom error class to handle HTTP errors
 // class HttpError extends Error {
