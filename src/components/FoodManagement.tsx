@@ -1,5 +1,5 @@
 // ============================================
-// SOLUTION 1: Update FoodManagement.tsx with proper error handling
+// FILE 1: frontend/src/components/FoodManagement.tsx - FIXED
 // ============================================
 import { useState, useEffect } from 'react';
 import { menuApi, FoodMenuItem, API_BASE_URL } from '../lib/api';
@@ -46,40 +46,35 @@ export default function FoodManagement() {
     }
   };
 
+  // ✅ FIXED: Get token from adminToken, not auth
   const uploadImage = async (file: File) => {
     setIsUploading(true);
     try {
       const formData = new FormData();
       formData.append('image', file);
       
-      // Get auth token from localStorage if exists
-      const authData = localStorage.getItem('auth');
-      const headers: HeadersInit = {};
+      // ✅ FIXED: Get token from adminToken
+      const token = localStorage.getItem('adminToken');
+      const headers: Record<string, string> = {};
       
-      if (authData) {
-        try {
-          const auth = JSON.parse(authData);
-          if (auth.token) {
-            headers['Authorization'] = `Bearer ${auth.token}`;
-          }
-        } catch (e) {
-
-        }
+      // Only add Authorization if token exists AND is a valid JWT format
+      if (token && token.split('.').length === 3) {
+        headers['Authorization'] = `Bearer ${token}`;
       }
       
 
       
       const response = await fetch(`${API_BASE_URL}/api/upload`, {
         method: 'POST',
-        body: formData,
         headers: headers,
+        body: formData,
       });
       
 
       
       if (!response.ok) {
         const errorText = await response.text();
-
+        console.error('❌ Upload failed:', errorText);
         throw new Error(`Image upload failed: ${response.status} - ${errorText}`);
       }
       
@@ -93,7 +88,9 @@ export default function FoodManagement() {
       }
       
       setFormData(prev => ({ ...prev, image_url: imageUrl }));
+      toast.success('Image uploaded successfully!');
     } catch (error) {
+      console.error('❌ Upload error:', error);
       toast.error(`Failed to upload image: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsUploading(false);
@@ -105,13 +102,13 @@ export default function FoodManagement() {
   }, []);
 
   const fetchFoodItems = async () => {
-    
     setIsRefreshing(true);
     try {
       const data = await menuApi.getAll();
 
       setFoodItems(data);
     } catch (error) {
+      console.error('❌ Fetch error:', error);
       toast.error('Failed to fetch food items. Please check your connection.');
     } finally {
       setIsRefreshing(false);
@@ -119,7 +116,6 @@ export default function FoodManagement() {
   };
 
   const handleRefresh = () => {
-    
     fetchFoodItems();
   };
 
@@ -166,6 +162,7 @@ export default function FoodManagement() {
       setShowAddForm(false);
       fetchFoodItems();
     } catch (error) {
+      console.error('❌ Save error:', error);
       toast.error('Failed to save food item. Please try again.');
     }
     setLoading(false);
@@ -191,7 +188,7 @@ export default function FoodManagement() {
     try {
       await menuApi.delete(id);
       fetchFoodItems();
-      toast.success('Menu item deleted successfully.');
+      toast.success('Menu item deleted successfully!');
     } catch (error) {
       toast.error('Failed to delete menu item. Please try again.');
     }
