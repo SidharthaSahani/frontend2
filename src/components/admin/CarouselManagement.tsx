@@ -18,7 +18,7 @@ export const CarouselManagement = () => {
       await uploadImage(file);
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (error) {
-      alert('Failed to upload image. Please try again.');
+      console.error('Failed to upload image:', error);
     }
   };
 
@@ -38,7 +38,7 @@ export const CarouselManagement = () => {
       if (replaceFileInputRef.current) replaceFileInputRef.current.value = '';
       replaceIndexRef.current = -1;
     } catch (error) {
-      alert('Failed to replace image. Please try again.');
+      console.error('Failed to replace image:', error);
     }
   };
 
@@ -46,7 +46,7 @@ export const CarouselManagement = () => {
     try {
       await deleteImage(index);
     } catch (error) {
-      alert('Failed to delete image. Please try again.');
+      console.error('Failed to delete image:', error);
     }
   };
 

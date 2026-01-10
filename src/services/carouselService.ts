@@ -9,25 +9,16 @@ const FALLBACK_IMAGES = [
   'https://images.unsplash.com/photo-1554679665-f5537f187268?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
 ];
 
-// Helper to get auth headers
-const getAuthHeaders = (): Record<string, string> => {
-  try {
-    const token = localStorage.getItem('adminToken');
-    if (token) {
-      return { 'Authorization': `Bearer ${token}` };
-    }
-  } catch (error) {
-
-  }
-  return {};
-};
-
 export const carouselService = {
   // Get all carousel images
   async getImages(): Promise<string[]> {
     try {
-
-      const response = await fetch(`${API_BASE_URL}/api/carousel-images`);
+      const response = await fetch(`${API_BASE_URL}/api/carousel-images`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       
       if (response.ok) {
         const data = await response.json();
@@ -58,9 +49,18 @@ export const carouselService = {
       formData.append('image', file);
 
       // ✅ FIXED URL: /api/upload/carousel
+      // Get admin token from localStorage
+      const token = localStorage.getItem('adminToken');
+      const headers: Record<string, string> = {};
+      
+      // Only add Authorization if token exists AND is a valid JWT format
+      if (token && token.split('.').length === 3) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch(`${API_BASE_URL}/api/upload/carousel`, {
         method: 'POST',
-        headers: getAuthHeaders(),
+        headers: headers,
         body: formData,
       });
 
@@ -89,12 +89,20 @@ export const carouselService = {
     try {
 
       
+      // Get admin token from localStorage
+      const token = localStorage.getItem('adminToken');
+      const headers: Record<string, string> = { 
+        'Content-Type': 'application/json',
+      };
+      
+      // Only add Authorization if token exists AND is a valid JWT format
+      if (token && token.split('.').length === 3) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch(`${API_BASE_URL}/api/carousel-images`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          ...getAuthHeaders()
-        },
+        headers: headers,
         body: JSON.stringify({ images }),
       });
 
@@ -117,15 +125,28 @@ export const carouselService = {
   // Delete carousel image by index
   async deleteImage(index: number): Promise<string[]> {
     try {
-
+      // Use the same approach as other API calls in the application
+      const token = localStorage.getItem('adminToken');
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      
+      // Only add Authorization if token exists AND is a valid JWT format
+      if (token && token.split('.').length === 3) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
       
       const response = await fetch(`${API_BASE_URL}/api/carousel-images/${index}`, {
         method: 'DELETE',
-        headers: getAuthHeaders(),
+        headers: headers,
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        // If it's an auth error, clear tokens
+        if (response.status === 401) {
+          localStorage.removeItem('adminToken');
+          localStorage.removeItem('adminEmail');
+          localStorage.removeItem('adminSession');
+        }
         throw new Error(errorData.error || `Delete failed: ${response.status}`);
       }
 
@@ -148,9 +169,18 @@ export const carouselService = {
       const formData = new FormData();
       formData.append('image', file);
 
+      // Get admin token from localStorage
+      const token = localStorage.getItem('adminToken');
+      const headers: Record<string, string> = {};
+      
+      // Only add Authorization if token exists AND is a valid JWT format
+      if (token && token.split('.').length === 3) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch(`${API_BASE_URL}/api/carousel-images/${index}`, {
         method: 'PUT',
-        headers: getAuthHeaders(),
+        headers: headers,
         body: formData,
       });
 
