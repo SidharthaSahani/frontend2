@@ -4,6 +4,7 @@ import { useTables } from '../../hooks/useTables';
 import { useBookings } from '../../hooks/useBookings';
 import { getTableBookings } from '../../utils/bookingUtils';
 import { BookingTimeline } from './BookingTimeline';
+import { toast } from 'react-toastify';
 
 interface TablesManagementProps {
   selectedDate: string;
@@ -13,17 +14,38 @@ export const TablesManagement = ({ selectedDate }: TablesManagementProps) => {
   const { tables, createTable, deleteTable, fetchTables } = useTables();
   const { filteredBookings, releaseBooking } = useBookings(selectedDate);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newTable, setNewTable] = useState({ table_number: '', capacity: 2 });
+  const [newTable, setNewTable] = useState({ table_number: '', capacity: 1 });
+  const [capacityInput, setCapacityInput] = useState<string>('');
   const [expandedTable, setExpandedTable] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await fetchTables();
+    } catch (error) {
+      // Error is handled in the fetchTables function
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const handleAddTable = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate capacity is within valid range
+    if (newTable.capacity < 1 || newTable.capacity > 20) {
+      toast.error('Please enter a valid capacity between 1 and 20.');
+      return;
+    }
+    
     try {
-      await createTable(newTable);
-      setNewTable({ table_number: '', capacity: 2 });
+      await createTable({ ...newTable, capacity: newTable.capacity });
+      setNewTable({ table_number: '', capacity: 1 });
+      setCapacityInput('');
       setShowAddForm(false);
     } catch (error) {
-      alert('Failed to add table. Please try again.');
+      toast.error('Failed to add table. Please try again.');
     }
   };
 
@@ -32,7 +54,7 @@ export const TablesManagement = ({ selectedDate }: TablesManagementProps) => {
     try {
       await deleteTable(id);
     } catch (error) {
-      alert('Failed to delete table. Please try again.');
+      toast.error('Failed to delete table. Please try again.');
     }
   };
 
@@ -42,11 +64,12 @@ export const TablesManagement = ({ selectedDate }: TablesManagementProps) => {
         <h3 className="text-xl sm:text-xl font-bold text-gray-800">Manage Tables</h3>
         <div className="flex gap-2">
           <button
-            onClick={fetchTables}
-            className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition text-sm sm:text-base"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <RefreshCw size={16} className="sm:size-18" />
-            Refresh
+            <RefreshCw size={16} className={`sm:size-18 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Refreshing...' : 'Refresh'}
           </button>
           <button
             onClick={() => setShowAddForm(!showAddForm)}
@@ -76,15 +99,24 @@ export const TablesManagement = ({ selectedDate }: TablesManagementProps) => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Capacity *
+               Table Capacity *
               </label>
               <input
                 type="number"
-                value={newTable.capacity}
-                onChange={(e) => setNewTable({ ...newTable, capacity: parseInt(e.target.value) || 2 })}
+                value={capacityInput}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setCapacityInput(value);
+                  const numValue = value ? parseInt(value) : 1;
+                  setNewTable({
+                    ...newTable,
+                    capacity: numValue
+                  });
+                }}
                 required
                 min="1"
                 max="20"
+                 placeholder="Enter table capacity (1–20)"
                 className="w-full px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               />
             </div>
@@ -131,11 +163,11 @@ export const TablesManagement = ({ selectedDate }: TablesManagementProps) => {
                     <td className="py-2 px-2 sm:py-3 sm:px-4 text-sm sm:text-base">{tableBookings.length}</td>
                     <td className="py-2 px-2 sm:py-3 sm:px-4">
                       <div className="flex items-center gap-2">
-                        <span className={`inline-block w-3 h-3 rounded-full ${tableBookings.length >= 1 ? 'bg-green-500' : 'bg-red-500'}`} title={tableBookings.length >= 1 ? 'Booked' : 'Available'}>
+                        <span className={`inline-block w-3 h-3 rounded-full ${tableBookings.length >= 1 ? 'bg-[#FF0008]' : 'bg-green-500'}`} title={tableBookings.length >= 1 ? 'Booked' : 'Available'}>
                           <span className="sr-only">{tableBookings.length >= 1 ? 'Booked' : 'Available'}</span>
                         </span>
                         <span className="text-sm font-semibold">
-                          {tableBookings.length >= 1 ? 'Table is booked' : 'No table booked'}
+                          {tableBookings.length >= 1 ? 'Booked' : 'Available'}
                         </span>
                       </div>
                     </td>

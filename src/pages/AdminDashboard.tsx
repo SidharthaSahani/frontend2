@@ -86,7 +86,7 @@ export default function AdminDashboard() {
                 {/* <a href="9840923097"> 📞 9840923097</a> */}
                 <li>📞 9840923097 </li>
                 <li>📞 9848675285 </li>
-                <li>✉️ info@grillandgathering.com</li>
+                <li>✉️ grillsandgather@gmail.com</li>
                 <li>📍 Grills and Gather ,Balkot </li>
               </ul>
             </div>

@@ -5,6 +5,8 @@ import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import AboutUs from './pages/AboutUs';
 import { useEffect } from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -43,7 +45,7 @@ function AppRoutes() {
       {/* WhatsApp Icon - Fixed at bottom right (only on home, about, and contact pages) */}
       {(location.pathname === '/' || location.pathname === '/about') && (
         <a 
-          href="https://wa.me/984-8675285" 
+          href="https://wa.me/9848675285" 
           target="_blank" 
           rel="noopener noreferrer"
           className="fixed bottom-6 right-6 z-50 shadow-lg hover:scale-105 transition-transform duration-300"
@@ -56,6 +58,18 @@ function AppRoutes() {
           />
         </a>
       )}
+      
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 }

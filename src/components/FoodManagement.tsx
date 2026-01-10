@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { menuApi, FoodMenuItem, API_BASE_URL } from '../lib/api';
 import { Plus, Trash2, Edit2, RefreshCw } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 interface FoodFormData {
   name: string;
@@ -93,8 +94,7 @@ export default function FoodManagement() {
       
       setFormData(prev => ({ ...prev, image_url: imageUrl }));
     } catch (error) {
-
-      alert(`Failed to upload image: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast.error(`Failed to upload image: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsUploading(false);
     }
@@ -112,8 +112,7 @@ export default function FoodManagement() {
 
       setFoodItems(data);
     } catch (error) {
-
-      alert('Failed to fetch food items. Please check your connection.');
+      toast.error('Failed to fetch food items. Please check your connection.');
     } finally {
       setIsRefreshing(false);
     }
@@ -128,17 +127,17 @@ export default function FoodManagement() {
     e.preventDefault();
     
     if (!formData.name.trim()) {
-      alert('Please enter a food name');
+      toast.error('Please enter a food name');
       return;
     }
     
     if (!formData.price || parseFloat(formData.price) <= 0) {
-      alert('Please enter a valid price');
+      toast.error('Please enter a valid price');
       return;
     }
     
     if (!formData.image_url) {
-      alert('Please upload an image');
+      toast.error('Please upload an image');
       return;
     }
     
@@ -157,16 +156,17 @@ export default function FoodManagement() {
       if (editingId) {
         await menuApi.update(editingId, dataToSubmit);
         setEditingId(null);
+        toast.success('Menu item updated successfully!');
       } else {
         await menuApi.create(dataToSubmit);
+        toast.success('Menu item added successfully!');
       }
       setFormData(initialFormData);
       setImagePreview(null);
       setShowAddForm(false);
       fetchFoodItems();
     } catch (error) {
-
-      alert('Failed to save food item. Please try again.');
+      toast.error('Failed to save food item. Please try again.');
     }
     setLoading(false);
   };
@@ -191,8 +191,9 @@ export default function FoodManagement() {
     try {
       await menuApi.delete(id);
       fetchFoodItems();
+      toast.success('Menu item deleted successfully.');
     } catch (error) {
-
+      toast.error('Failed to delete menu item. Please try again.');
     }
   };
 

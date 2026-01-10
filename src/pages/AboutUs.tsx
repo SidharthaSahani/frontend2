@@ -116,7 +116,7 @@ export default function AboutUs() {
               <ul className="space-y-2 text-gray-300">
                 <li>📞 9840923097 </li>
                 <li>📞 9848675285 </li>
-                <li>✉️ info@grillandgathering.com</li>
+                <li>✉️ grillsandgather@gmail.com</li>
                 <li>📍 Grills & Gather ,Balkot </li>
               </ul>
             </div>

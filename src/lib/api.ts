@@ -1,26 +1,23 @@
-// lib/api.ts - FIXED VERSION
-// Determine API base URL based on environment
+// ============================================
+// FILE 1: frontend/src/lib/api.ts - FIXED
+// ============================================
 const getApiBaseUrl = () => {
-  // Check if we're running in development mode or production
   if (typeof window !== 'undefined') {
-    // Client-side: Use localhost for development, production URL otherwise
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     return isLocalhost ? 'http://localhost:8080' : 'https://backend2-re0m.onrender.com';
   }
-  return 'https://backend2-re0m.onrender.com'; // Default to production
+  return 'https://backend2-re0m.onrender.com';
 };
 
 export const API_BASE_URL = getApiBaseUrl();
 
-// Custom error class
-class HttpError extends Error {
+export class HttpError extends Error {
   constructor(public status: number, message: string) {
     super(message);
     this.name = 'HttpError';
   }
 }
 
-// Standard API response structure from backend
 interface ApiResponse<T> {
   success: boolean;
   message?: string;
@@ -28,30 +25,25 @@ interface ApiResponse<T> {
   error?: string;
 }
 
-// Helper function to make API requests
+// ✅ FIXED: Better token handling
 async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
   
-  // Get admin token from localStorage if available
-  const adminSession = localStorage.getItem('adminSession');
-  let authHeader = {};
+  // Get admin token - only if it exists and looks valid
+  const token = localStorage.getItem('adminToken');
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(options.headers as Record<string, string> || {})
+  };
   
-  if (adminSession) {
-    // For demo purposes, we'll use a simple approach
-    // In a real application, you would use a proper JWT token
-    const sessionData = JSON.parse(adminSession);
-    // Create a simple token based on the session
-    const token = btoa(encodeURIComponent(sessionData.email));
-    authHeader = { 'Authorization': `Bearer ${token}` };
+  // ✅ Only add Authorization if token exists AND is a valid JWT format
+  if (token && token.split('.').length === 3) {
+    headers['Authorization'] = `Bearer ${token}`;
   }
   
   const config: RequestInit = {
-    headers: {
-      'Content-Type': 'application/json',
-      ...authHeader, // Include auth header if available
-      ...options.headers,
-    },
     ...options,
+    headers
   };
 
   try {
@@ -59,48 +51,44 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      
+      // If it's an auth error, clear tokens
+      if (response.status === 401) {
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminEmail');
+        localStorage.removeItem('adminSession');
+      }
+      
       throw new HttpError(
         response.status, 
         errorData.error || `HTTP error! status: ${response.status}`
       );
     }
     
-    // Handle new backend response format
     const result: ApiResponse<T> = await response.json();
-    
-    // If backend returns { success, data }, extract data
-    if ('data' in result) {
-      return result.data as T;
-    }
-    
-    // Otherwise return the whole response (for legacy endpoints)
-    return result as T;
+    return 'data' in result ? (result.data as T) : (result as T);
   } catch (error) {
-    
     throw error;
   }
 }
 
-// Helper for multipart form data (file uploads)
+// ✅ FIXED: Better upload handling
 async function apiUpload<T>(endpoint: string, formData: FormData): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
   
-  // Get admin token from localStorage if available
-  const adminSession = localStorage.getItem('adminSession');
-  let authHeader = {};
+  const token = localStorage.getItem('adminToken');
+  const headers: Record<string, string> = {};
   
-  if (adminSession) {
-    const sessionData = JSON.parse(adminSession);
-    const token = btoa(encodeURIComponent(sessionData.email));
-    authHeader = { 'Authorization': `Bearer ${token}` };
+  // ✅ Only add Authorization if token is valid JWT
+  if (token && token.split('.').length === 3) {
+    headers['Authorization'] = `Bearer ${token}`;
   }
   
   try {
     const response = await fetch(url, {
       method: 'POST',
-      headers: authHeader, // Include auth header for admin uploads
-      body: formData,
-      // Don't set Content-Type, browser will set it with boundary
+      headers,
+      body: formData
     });
     
     if (!response.ok) {
@@ -114,7 +102,6 @@ async function apiUpload<T>(endpoint: string, formData: FormData): Promise<T> {
     const result: ApiResponse<T> = await response.json();
     return 'data' in result ? (result.data as T) : (result as T);
   } catch (error) {
-    
     throw error;
   }
 }
@@ -122,7 +109,6 @@ async function apiUpload<T>(endpoint: string, formData: FormData): Promise<T> {
 // ==================== TABLES API ====================
 export const tablesApi = {
   getAll: () => apiRequest<RestaurantTable[]>('/api/tables'),
-  
   create: (table: Omit<RestaurantTable, 'id' | 'created_at' | 'updated_at'>) => 
     apiRequest<RestaurantTable>('/api/tables', {
       method: 'POST',
@@ -132,7 +118,6 @@ export const tablesApi = {
         updated_at: new Date().toISOString()
       })
     }),
-    
   update: (id: string, updates: Partial<RestaurantTable>) => 
     apiRequest<RestaurantTable>(`/api/tables/${id}`, {
       method: 'PUT',
@@ -141,7 +126,6 @@ export const tablesApi = {
         updated_at: new Date().toISOString()
       })
     }),
-    
   delete: (id: string) => 
     apiRequest<void>(`/api/tables/${id}`, { method: 'DELETE' })
 };
@@ -149,7 +133,6 @@ export const tablesApi = {
 // ==================== BOOKINGS API ====================
 export const bookingsApi = {
   getAll: () => apiRequest<Booking[]>('/api/bookings'),
-  
   create: (booking: Omit<Booking, 'id' | 'created_at'>) => 
     apiRequest<Booking>('/api/bookings', {
       method: 'POST',
@@ -160,7 +143,6 @@ export const bookingsApi = {
         status: 'confirmed'
       })
     }),
-    
   update: (id: string, updates: Partial<Booking>) => 
     apiRequest<Booking>(`/api/bookings/${id}`, {
       method: 'PUT',
@@ -169,13 +151,10 @@ export const bookingsApi = {
         updated_at: new Date().toISOString()
       })
     }),
-    
   delete: (id: string) => 
     apiRequest<void>(`/api/bookings/${id}`, { method: 'DELETE' }),
-    
   deleteByTableId: (tableId: string) => 
     apiRequest<void>(`/api/bookings/table/${tableId}`, { method: 'DELETE' }),
-    
   completeByTableId: (tableId: string) => 
     apiRequest<void>(`/api/bookings/table/${tableId}`, { 
       method: 'PUT',
@@ -186,7 +165,6 @@ export const bookingsApi = {
 // ==================== MENU API ====================
 export const menuApi = {
   getAll: () => apiRequest<FoodMenuItem[]>('/api/menu'),
-  
   create: (item: Omit<FoodMenuItem, 'id' | 'created_at' | 'updated_at'>) => 
     apiRequest<FoodMenuItem>('/api/menu', {
       method: 'POST',
@@ -197,7 +175,6 @@ export const menuApi = {
         updated_at: new Date().toISOString()
       })
     }),
-    
   update: (id: string, updates: Partial<FoodMenuItem>) => 
     apiRequest<FoodMenuItem>(`/api/menu/${id}`, {
       method: 'PUT',
@@ -206,7 +183,6 @@ export const menuApi = {
         updated_at: new Date().toISOString()
       })
     }),
-    
   delete: (id: string) => 
     apiRequest<void>(`/api/menu/${id}`, { method: 'DELETE' })
 };
@@ -214,45 +190,39 @@ export const menuApi = {
 // ==================== CAROUSEL API ====================
 export const carouselApi = {
   getAll: () => apiRequest<string[]>('/api/carousel-images'),
-  
   updateAll: (images: string[]) => 
     apiRequest<{ images: string[] }>('/api/carousel-images', {
       method: 'POST',
       body: JSON.stringify({ images })
     }),
-    
   delete: (index: number) => 
     apiRequest<{ images: string[] }>(`/api/carousel-images/${index}`, {
       method: 'DELETE'
     }),
-    
   update: async (index: number, file: File) => {
-    // Get admin token from localStorage if available
-    const adminSession = localStorage.getItem('adminSession');
-    let headers: Record<string, string> = {};
+    const token = localStorage.getItem('adminToken');
+    const headers: Record<string, string> = {};
     
-    if (adminSession) {
-      const sessionData = JSON.parse(adminSession);
-      const token = btoa(encodeURIComponent(sessionData.email));
-      headers = { 'Authorization': `Bearer ${token}` };
+    if (token && token.split('.').length === 3) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
     
     const formData = new FormData();
     formData.append('image', file);
-    return fetch(`${API_BASE_URL}/api/carousel-images/${index}`, {
+    const response = await fetch(`${API_BASE_URL}/api/carousel-images/${index}`, {
       method: 'PUT',
-      headers: headers, // Include auth header for admin operations
+      headers,
       body: formData
-    }).then(async (response) => {
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new HttpError(response.status, errorData.error || 'Update failed');
-      }
-      const result: ApiResponse<{ images: string[] }> = await response.json();
-      return 'data' in result ? result.data : result;
     });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new HttpError(response.status, errorData.error || 'Update failed');
+    }
+    
+    const result: ApiResponse<{ images: string[] }> = await response.json();
+    return 'data' in result ? result.data : result;
   },
-  
   upload: (file: File) => {
     const formData = new FormData();
     formData.append('image', file);
@@ -269,7 +239,7 @@ export const uploadApi = {
   }
 };
 
-// ==================== DATA INTERFACES ====================
+// ==================== INTERFACES ====================
 export interface RestaurantTable {
   id: string;
   table_number: string;
@@ -306,7 +276,6 @@ export interface FoodMenuItem {
   updated_at: string;
 }
 
-// ==================== CONSTANTS ====================
 export const FALLBACK_CAROUSEL_IMAGES = [
   'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
   'https://images.unsplash.com/photo-1552566626-52f8b828add9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',

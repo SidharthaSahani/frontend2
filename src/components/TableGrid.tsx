@@ -69,14 +69,14 @@ export default function TableGrid({ tables, bookings, selectedDate, onTableSelec
                     onClick={() => !booked && available && onTableSelect(table, timeSlot)}
                     className={`p-2 sm:p-3 rounded-lg border transition-all duration-200 text-center cursor-pointer ${
                       booked 
-                        ? 'bg-[rgb(239,106,0)] border-[rgb(239,106,0)] text-white cursor-not-allowed opacity-50' 
+                        ? 'bg-red-500/20 border-red-500 text-red-700 cursor-not-allowed opacity-75' 
                         : available 
-                          ? 'bg-[#8BC34A] border-[#8BC34A] text-white hover:bg-[#689F38]' 
-                          : 'bg-gray-400 border-gray-500 text-gray-100 cursor-not-allowed'
+                          ? 'bg-green-500/20 border-green-500 text-green-700 hover:bg-green-500/30' 
+                          : 'bg-gray-200 border-gray-300 text-gray-500 cursor-not-allowed'
                     }`}
-                    style={booked ? { backgroundColor: 'rgb(239, 106, 0)', borderColor: 'rgb(239, 106, 0)' } : {}}
+                    style={booked ? {} : {}}
                   >
-                    <div className="text-xs sm:text-sm font-medium">{convertTo12HourFormat(timeSlot)}</div>
+                    <div className="text-sm sm:text-base font-bold">{convertTo12HourFormat(timeSlot)}</div>
                     <div className="text-xs mt-1">{booked ? 'Booked' : 'Available'}</div>
                   </div>
                 );

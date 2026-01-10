@@ -12,13 +12,9 @@ const FALLBACK_IMAGES = [
 // Helper to get auth headers
 const getAuthHeaders = (): Record<string, string> => {
   try {
-    const adminSession = localStorage.getItem('adminSession');
-    if (adminSession) {
-      const sessionData = JSON.parse(adminSession);
-      if (sessionData.email) {
-        const token = btoa(encodeURIComponent(sessionData.email));
-        return { 'Authorization': `Bearer ${token}` };
-      }
+    const token = localStorage.getItem('adminToken');
+    if (token) {
+      return { 'Authorization': `Bearer ${token}` };
     }
   } catch (error) {
 

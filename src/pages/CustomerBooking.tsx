@@ -35,7 +35,7 @@ export default function CustomerBooking() {
         </div>
       </main>
       
-      <footer id="contact-footer" className="bg-[#1B5E20] text-white py-8 mt-auto">
+      <footer id="contact-footer" className="bg-[#1f2836] text-white py-8 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
@@ -68,7 +68,7 @@ export default function CustomerBooking() {
                <li><a href="tel:9840923097"className='hover:text-[#4CAF50]' >📞 9840923097</a> </li> 
              
                <li><a href='tel:9848675285' className='hover:text-[#4CAF50]'>📞 9848675285 </a> </li> 
-                <li>✉️ info@grillandgathering.com</li>
+                <li>✉️ grillsandgather@gmail.com</li>
                 <li>📍 Grills and Gather ,Balkot </li>
               </ul>
             </div>

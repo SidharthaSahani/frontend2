@@ -1,20 +1,19 @@
+// ============================================
+// FILE 1: frontend/src/context/AuthContext.tsx - FIXED
+// ============================================
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 interface AuthContextType {
   isAdminLoggedIn: boolean;
   adminEmail: string | null;
-  login: (email: string, password: string) => boolean;
+  login: (email: string) => void;  // ✅ Changed: Only needs email now
   logout: () => void;
   sessionExpired: boolean;
   setSessionExpired: (expired: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const ADMIN_CREDENTIALS = {
-  email: 'admin@restaurant.com',
-  password: 'admin123',
-};
 
 // Session timeout in milliseconds (15 minutes)
 const SESSION_TIMEOUT = 15 * 60 * 1000;
@@ -28,19 +27,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Check for existing session on app load
   useEffect(() => {
     const savedSession = localStorage.getItem('adminSession');
-    if (savedSession) {
-      const sessionData = JSON.parse(savedSession);
-      const now = Date.now();
-      
-      // Check if session is still valid (within 15 minutes)
-      if (now - sessionData.timestamp < SESSION_TIMEOUT) {
-        setIsAdminLoggedIn(true);
-        setAdminEmail(sessionData.email);
-        resetSessionTimer();
-      } else {
-        // Session expired, clear it
-        localStorage.removeItem('adminSession');
-        setSessionExpired(true);
+    const token = localStorage.getItem('adminToken');
+    
+    if (savedSession && token) {
+      try {
+        const sessionData = JSON.parse(savedSession);
+        const now = Date.now();
+        
+        // Check if session is still valid (within 15 minutes)
+        if (now - sessionData.timestamp < SESSION_TIMEOUT) {
+          setIsAdminLoggedIn(true);
+          setAdminEmail(sessionData.email);
+          resetSessionTimer();
+        } else {
+          // Session expired, clear it
+          logout();
+          setSessionExpired(true);
+        }
+      } catch (error) {
+        console.error('Error parsing session:', error);
+        logout();
       }
     }
   }, []);
@@ -91,22 +97,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [isAdminLoggedIn]);
 
-  const login = (email: string, password: string): boolean => {
-    if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
-      setIsAdminLoggedIn(true);
-      setAdminEmail(email);
-      setSessionExpired(false);
-      localStorage.setItem('adminSession', JSON.stringify({ email, timestamp: Date.now() }));
-      resetSessionTimer(); // Start the session timer
-      return true;
-    }
-    return false;
+  // ✅ FIXED: No password check here - backend already validated it
+  const login = (email: string): void => {
+    setIsAdminLoggedIn(true);
+    setAdminEmail(email);
+    setSessionExpired(false);
+    
+    // Save session
+    localStorage.setItem('adminSession', JSON.stringify({ 
+      email, 
+      timestamp: Date.now() 
+    }));
+    
+    resetSessionTimer(); // Start the session timer
   };
 
   const logout = () => {
     setIsAdminLoggedIn(false);
     setAdminEmail(null);
+    
+    // Clear all stored data
     localStorage.removeItem('adminSession');
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminEmail');
+    
+    // Show logout success message
+    toast.success('Successfully logged out!');
     
     // Clear timer
     if (sessionTimer) {
@@ -116,7 +132,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ isAdminLoggedIn, adminEmail, login, logout, sessionExpired, setSessionExpired }}>
+    <AuthContext.Provider value={{ 
+      isAdminLoggedIn, 
+      adminEmail, 
+      login, 
+      logout, 
+      sessionExpired, 
+      setSessionExpired 
+    }}>
       {children}
     </AuthContext.Provider>
   );

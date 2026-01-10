@@ -6,6 +6,7 @@ import BookingForm, { BookingFormData } from './BookingForm';
 import FoodMenu from './FoodMenu';
 import Carousel from './Carousel';
 import { CheckCircle2 } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 export default function UserBooking() {
   const [tables, setTables] = useState<RestaurantTable[]>([]);
@@ -37,7 +38,7 @@ export default function UserBooking() {
       const data = await tablesApi.getAll();
       setTables(data);
     } catch (error) {
-
+      toast.error('Failed to load tables. Please refresh the page.');
     }
     setLoading(false);
   };
@@ -46,8 +47,12 @@ export default function UserBooking() {
     try {
       const data = await bookingsApi.getAll();
       setBookings(data);
-    } catch (error) {
-
+    } catch (error: any) {
+      // Only show error if it's not a 401 Unauthorized (for non-admin users)
+      if (error.status !== 401) {
+        toast.error('Failed to load bookings. Some availability information may be outdated.');
+      }
+      // For 401 errors, we silently handle them since non-admins can't access bookings API
     }
   };
 
@@ -62,7 +67,7 @@ export default function UserBooking() {
         'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
       ]);
     } catch (error) {
-
+      toast.warn('Failed to load carousel images. Using default images.');
       // Fallback to sample images if API fails
       setCarouselImages([
         'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
@@ -88,17 +93,15 @@ export default function UserBooking() {
       
       setSelectedTable(null);
       setSelectedTimeSlot('');
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 5000);
+      toast.success('Booking confirmed! Your table has been successfully reserved.');
     } catch (error: any) {
-
       // Handle conflict error (time slot already booked)
       if (error.status === 409) {
-        alert('This time slot is already booked for the selected table. Please choose a different time slot.');
+        toast.error('This time slot is already booked for the selected table. Please choose a different time slot.');
         // Refresh bookings to show the current state
         await fetchBookings();
       } else {
-        alert('Failed to submit booking. Please try again.');
+        toast.error('Failed to submit booking. Please try again.');
       }
     }
   };
