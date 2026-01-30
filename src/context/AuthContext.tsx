@@ -15,8 +15,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Session timeout in milliseconds (15 minutes)
-const SESSION_TIMEOUT = 15 * 60 * 1000;
+// Session timeout in milliseconds (23 hours)
+const SESSION_TIMEOUT = 23 * 60 * 60 * 1000;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
@@ -34,10 +34,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const sessionData = JSON.parse(savedSession);
         const now = Date.now();
         
-        // Check if session is still valid (within 15 minutes)
-        if (now - sessionData.timestamp < SESSION_TIMEOUT) {
+        // Check if session is still valid (within 23 hours)
+        if (sessionData.timestamp && now - sessionData.timestamp < SESSION_TIMEOUT) {
           setIsAdminLoggedIn(true);
           setAdminEmail(sessionData.email);
+          // Only reset timer if user is active, otherwise set a fresh timer
           resetSessionTimer();
         } else {
           // Session expired, clear it
@@ -46,10 +47,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       } catch (error) {
         console.error('Error parsing session:', error);
+        // Only logout if there was a parsing error
         logout();
       }
     }
-  }, []);
+  }, []); // Empty dependency array ensures this only runs on mount
 
   // Reset the session timer
   const resetSessionTimer = () => {
@@ -103,11 +105,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAdminEmail(email);
     setSessionExpired(false);
     
-    // Save session
-    localStorage.setItem('adminSession', JSON.stringify({ 
-      email, 
-      timestamp: Date.now() 
-    }));
+    // Save session with all required fields
+    const sessionData = {
+      email,
+      timestamp: Date.now(),
+    };
+    localStorage.setItem('adminSession', JSON.stringify(sessionData));
     
     resetSessionTimer(); // Start the session timer
   };

@@ -66,16 +66,16 @@ export const TablesManagement = ({ selectedDate }: TablesManagementProps) => {
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+            className="admin-btn admin-btn-secondary admin-btn-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <RefreshCw size={16} className={`sm:size-18 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw size={18} className={isRefreshing ? 'animate-spin' : ''} />
             {isRefreshing ? 'Refreshing...' : 'Refresh'}
           </button>
           <button
             onClick={() => setShowAddForm(!showAddForm)}
-            className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm sm:text-base"
+            className="admin-btn admin-btn-primary admin-btn-lg"
           >
-            <Plus size={16} className="sm:size-18" />
+            <Plus size={26} />
             Add Table
           </button>
         </div>
@@ -121,17 +121,17 @@ export const TablesManagement = ({ selectedDate }: TablesManagementProps) => {
               />
             </div>
           </div>
-          <div className="flex gap-3 mt-4">
+          <div className="flex gap-2 mt-4">
             <button
               type="button"
               onClick={() => setShowAddForm(false)}
-              className="px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm sm:text-base"
+              className="admin-btn admin-btn-outline admin-btn-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-3 py-2 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm sm:text-base"
+              className="admin-btn admin-btn-primary admin-btn-sm"
             >
               Add Table
             </button>
@@ -172,20 +172,20 @@ export const TablesManagement = ({ selectedDate }: TablesManagementProps) => {
                       </div>
                     </td>
                     <td className="py-2 px-2 sm:py-3 sm:px-4">
-                      <div className="flex justify-end gap-1 sm:gap-2">
+                      <div className="flex justify-end gap-1">
                         <button
                           onClick={() => setExpandedTable(isExpanded ? null : table.id)}
-                          className="p-1.5 sm:p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                          className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition"
                           title={isExpanded ? "Collapse" : "View Bookings"}
                         >
-                          <Unlock size={16} className="sm:size-18" />
+                          <Unlock size={20} />
                         </button>
                         <button
                           onClick={() => handleDeleteTable(table.id)}
-                          className="p-1.5 sm:p-2 text-red-600 hover:bg-red-500 rounded-lg transition"
+                          className="p-1.5 text-red-600 hover:bg-red-50 rounded transition"
                           title="Delete Table"
                         >
-                          <Trash2 size={16} className="sm:size-18" />
+                          <Trash2 size={20} />
                         </button>
                       </div>
                     </td>

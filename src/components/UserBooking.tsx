@@ -116,10 +116,15 @@ export default function UserBooking() {
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 customer-booking">
-      <div className="text-center mb-6 sm:mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-[#1B5E20] mb-2">Reserve Your Table</h1>
-        <p className="text-[#2E2E2E] text-sm sm:text-base">Select an available table and time slot to make your reservation</p>
+    <div className="p-4 sm:p-6 space-y-6 customer-booking max-w-7xl mx-auto">
+      <div className="text-center mb-6">
+        <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-100 rounded-full mb-2">
+          <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900 mb-2">Reserve Your Table</h1>
+        <p className="text-neutral-600 text-sm max-w-xl mx-auto">Select an available table and time slot to make your reservation</p>
       </div>
 
       {/* Carousel Section */}
@@ -130,43 +135,65 @@ export default function UserBooking() {
       </div>
 
       {showSuccess && (
-        <div className="bg-green-50 border-2 border-green-500 rounded-lg p-3 sm:p-4 flex items-center gap-3 animate-pulse">
-          <CheckCircle2 className="text-green-600" size={20} />
+        <div className="bg-green-50 border border-green-200 rounded-2xl p-4 sm:p-5 flex items-center gap-4 shadow-elegant animate-pulse">
+          <div className="flex-shrink-0">
+            <CheckCircle2 className="text-green-600" size={24} />
+          </div>
           <div>
-            <p className="font-semibold text-green-800 text-sm sm:text-base">Booking Confirmed!</p>
+            <p className="font-semibold text-green-800 text-base sm:text-lg">Booking Confirmed!</p>
             <p className="text-sm text-green-700">Your table has been successfully reserved.</p>
           </div>
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+      <div className="card">
         <div className="mb-4">
-          <label className="block text-sm font-medium text-[#2E2E2E] mb-2">Select Date</label>
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={handleDateChange}
-            min={new Date().toISOString().split('T')[0]}
-            className="px-3 py-2 border border-[#4CAF50] rounded-md shadow-sm focus:outline-none focus:ring-[#1B5E20] focus:border-[#1B5E20] sm:text-sm"
-          />
+          <label className="block text-sm font-medium text-neutral-700 mb-2">Select Date</label>
+          <div className="relative max-w-md">
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={handleDateChange}
+              min={new Date().toISOString().split('T')[0]}
+              className="input-field pl-10"
+            />
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center gap-4 sm:gap-6 mb-4 sm:mb-6 pb-3 sm:pb-4 border-b border-[#4CAF50]">
+        <div className="flex items-center gap-4 mb-4 pb-3 border-b border-neutral-200">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 sm:w-4 sm:h-4 bg-[#4CAF50] rounded"></div>
-            <span className="text-xs sm:text-sm font-medium text-[#2E2E2E]">Available</span>
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span className="text-xs font-medium text-neutral-700">Available</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 sm:w-4 sm:h-4 bg-red-500 rounded"></div>
-            <span className="text-xs sm:text-sm font-medium text-[#2E2E2E]">Booked</span>
+            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+            <span className="text-xs font-medium text-neutral-700">Booked</span>
           </div>
         </div>
 
         {loading ? (
-          <div className="text-center py-8 sm:py-12 text-[#2E2E2E] text-sm sm:text-base">Loading tables...</div>
+          <div className="text-center py-12 text-neutral-600">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-100 rounded-full mb-4 animate-pulse">
+              <svg className="w-6 h-6 text-primary-600 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+            <p className="text-neutral-600">Loading tables...</p>
+          </div>
         ) : tables.length === 0 ? (
-          <div className="text-center py-8 sm:py-12 text-[#2E2E2E] text-sm sm:text-base">
-            No tables available at the moment. Please check back later.
+          <div className="text-center py-12 text-neutral-600">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-neutral-100 rounded-full mb-4">
+              <svg className="w-6 h-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+              </svg>
+            </div>
+            <p className="text-neutral-600">No tables available at the moment. Please check back later.</p>
           </div>
         ) : (
           <TableGrid 

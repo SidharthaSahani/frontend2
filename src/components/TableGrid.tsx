@@ -51,33 +51,67 @@ export default function TableGrid({ tables, bookings, selectedDate, onTableSelec
         const available = hasAvailableSlots(table.id);
         
         return (
-          <div key={table.id} className="bg-white rounded-lg shadow p-4 sm:p-6 border border-[#4CAF50]">
-            <div className="flex items-center justify-between mb-4">
+          <div key={table.id} className="card border border-primary-200 hover:border-primary-300 transition-colors duration-300">
+            <div className="flex items-center justify-between mb-5">
               <div>
-                <h3 className="text-lg sm:text-xl font-bold text-[#1B5E20]">Table {table.table_number}</h3>
-                <p className="text-sm text-[#2E2E2E]">{table.capacity} seats</p>
-                <p className="text-xs text-[#4CAF50] mt-1">click at time slot to book table</p>
+                <div className="flex items-center gap-3 mb-1">
+                  <h3 className="text-xl sm:text-2xl font-serif font-bold text-neutral-900">Table {table.table_number}</h3>
+                  <span className={`badge ${available ? 'badge-primary' : 'badge-secondary'}`}>
+                    {available ? 'Available' : 'Fully Booked'}
+                  </span>
+                </div>
+                <p className="text-sm text-neutral-600 flex items-center gap-1">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  {table.capacity} seats
+                </p>
+                {available && (
+                  <p className="text-xs text-primary-600 mt-2 flex items-center gap-1">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Click time slot to book
+                  </p>
+                )}
+              </div>
+              <div className="bg-gradient-to-br from-primary-50 to-accent-50 p-3 rounded-xl">
+                <svg className="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
               </div>
             </div>
             
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {TIME_SLOTS_24H.map(timeSlot => {
                 const booked = isTimeSlotBooked(table.id, timeSlot);
+                const isAvailable = available && !booked;
+                
                 return (
                   <div
                     key={`${table.id}-${timeSlot}`}
-                    onClick={() => !booked && available && onTableSelect(table, timeSlot)}
-                    className={`p-2 sm:p-3 rounded-lg border transition-all duration-200 text-center cursor-pointer ${
+                    onClick={() => isAvailable && onTableSelect(table, timeSlot)}
+                    className={`p-3 sm:p-4 rounded-xl border-2 transition-all duration-300 text-center cursor-pointer transform hover:scale-105 ${
                       booked 
-                        ? 'bg-red-500/20 border-red-500 text-red-700 cursor-not-allowed opacity-75' 
-                        : available 
-                          ? 'bg-green-500/20 border-green-500 text-green-700 hover:bg-green-500/30' 
-                          : 'bg-gray-200 border-gray-300 text-gray-500 cursor-not-allowed'
+                        ? 'table-slot-booked' 
+                        : isAvailable 
+                          ? 'table-slot-available hover:shadow-elegant' 
+                          : 'table-slot-unavailable'
                     }`}
-                    style={booked ? {} : {}}
                   >
-                    <div className="text-sm sm:text-base font-bold">{convertTo12HourFormat(timeSlot)}</div>
-                    <div className="text-xs mt-1">{booked ? 'Booked' : 'Available'}</div>
+                    <div className="text-sm sm:text-base font-bold mb-1">{convertTo12HourFormat(timeSlot)}</div>
+                    <div className={`text-xs font-medium ${
+                      booked ? 'text-red-700' : isAvailable ? 'text-green-700' : 'text-neutral-500'
+                    }`}>
+                      {booked ? 'Booked' : isAvailable ? 'Available' : 'Unavailable'}
+                    </div>
+                    {isAvailable && (
+                      <div className="mt-1">
+                        <svg className="w-4 h-4 mx-auto text-green-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
                   </div>
                 );
               })}

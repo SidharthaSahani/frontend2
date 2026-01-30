@@ -58,17 +58,17 @@ export const CarouselManagement = () => {
         <div className="flex gap-2">
           <button
             onClick={fetchImages}
-            className="flex items-center gap-2 px-3 py-2 bg-white text-purple-600 rounded-lg hover:bg-gray-100 transition font-medium"
+            className="admin-btn admin-btn-outline admin-btn-sm"
           >
-            <RefreshCw size={16} />
+            <RefreshCw size={14} />
             Refresh
           </button>
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={isLoading}
-            className="flex items-center gap-2 px-4 py-2 bg-white text-purple-600 rounded-lg hover:bg-gray-100 transition font-medium disabled:opacity-50"
+            className="admin-btn admin-btn-outline admin-btn-sm disabled:opacity-50"
           >
-            <Upload size={18} />
+            <Upload size={14} />
             {isLoading ? 'Uploading...' : 'Upload Image'}
           </button>
         </div>

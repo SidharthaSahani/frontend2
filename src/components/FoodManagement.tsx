@@ -219,9 +219,9 @@ export default function FoodManagement() {
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+            className="admin-btn admin-btn-secondary admin-btn-md disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <RefreshCw size={16} className={`sm:size-18 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
             {isRefreshing ? 'Refreshing...' : 'Refresh'}
           </button>
           <button
@@ -232,9 +232,9 @@ export default function FoodManagement() {
                 setShowAddForm(true);
               }
             }}
-            className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm sm:text-base"
+            className="admin-btn admin-btn-primary admin-btn-md"
           >
-            <Plus size={16} className="sm:size-18" />
+            <Plus size={30} />
             {showAddForm ? 'Cancel' : 'Add Menu Item'}
           </button>
         </div>
@@ -352,7 +352,7 @@ export default function FoodManagement() {
                 <img
                   src={imagePreview || formData.image_url}
                   alt="Preview"
-                  className="w-24 h-24 sm:w-32 sm:h-32 aspect-square object-cover rounded-lg"
+                  className="w-full h-32 object-contain rounded-lg border border-gray-200"
                 />
               </div>
             )}
@@ -393,15 +393,17 @@ export default function FoodManagement() {
             {foodItems.map((item) => (
               <tr key={item.id} className="border-b hover:bg-gray-50">
                 <td className="py-2 px-2 sm:py-3 sm:px-4">
-                  <img
-                    src={item.image_url}
-                    alt={item.name}
-                    className="w-10 h-10 sm:w-12 sm:h-12 aspect-square object-cover rounded"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        'https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=100&h=100';
-                    }}
-                  />
+                  <div className="flex items-center justify-center">
+                    <img
+                      src={item.image_url}
+                      alt={item.name}
+                      className="w-20 h-20 object-contain rounded-lg border border-gray-200 shadow-sm"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          'https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=200&h=200';
+                      }}
+                    />
+                  </div>
                 </td>
                 <td className="py-2 px-2 sm:py-3 sm:px-4">
                   <div>
@@ -429,20 +431,20 @@ export default function FoodManagement() {
                   </span>
                 </td>
                 <td className="py-2 px-2 sm:py-3 sm:px-4">
-                  <div className="flex justify-end gap-1 sm:gap-2">
+                  <div className="flex justify-end gap-1">
                     <button
                       onClick={() => handleEdit(item)}
-                      className="p-1.5 sm:p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                      className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition"
                       title="Edit Item"
                     >
-                      <Edit2 size={16} className="sm:size-18" />
+                      <Edit2 size={20} />
                     </button>
                     <button
                       onClick={() => handleDelete(item.id)}
-                      className="p-1.5 sm:p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                      className="p-1.5 text-red-600 hover:bg-red-50 rounded transition"
                       title="Delete Item"
                     >
-                      <Trash2 size={16} className="sm:size-18" />
+                      <Trash2 size={20} />
                     </button>
                   </div>
                 </td>

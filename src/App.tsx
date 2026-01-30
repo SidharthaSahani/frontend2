@@ -27,10 +27,10 @@ function AppRoutes() {
 
   // Reset session expired flag when navigating away from login page
   useEffect(() => {
-    if (location.pathname !== '/admin/login' && sessionExpired) {
+    if (location.pathname !== '/admin/login') {
       setSessionExpired(false);
     }
-  }, [location.pathname, sessionExpired, setSessionExpired]);
+  }, [location.pathname, setSessionExpired]);
 
   return (
     <div className="relative min-h-screen">

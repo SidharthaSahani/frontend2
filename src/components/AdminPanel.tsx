@@ -37,9 +37,9 @@ export default function AdminPanel() {
           />
           <button
             onClick={handleRefreshAll}
-            className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition text-sm sm:text-base"
+            className="admin-btn admin-btn-secondary admin-btn-sm"
           >
-            <RefreshCw size={16} className="sm:size-18" />
+            <RefreshCw size={14} />
             Refresh All
           </button>
         </div>

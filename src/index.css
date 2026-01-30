@@ -1,3 +1,628 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans text-neutral-800 bg-neutral-50;
+    font-feature-settings: "kern" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif text-neutral-900;
+  }
+  
+  h1 {
+    @apply text-4xl md:text-5xl font-bold;
+  }
+  
+  h2 {
+    @apply text-3xl md:text-4xl font-bold;
+  }
+  
+  h3 {
+    @apply text-2xl md:text-3xl font-semibold;
+  }
+}
+
+@layer components {
+  /* Base Button Styles - Extra Compact Version */
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-1 px-2.5 rounded-md transition-all duration-200 shadow-sm hover:shadow focus:outline-none focus:ring-1 focus:ring-primary-500 focus:ring-offset-1 text-xs;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-600 hover:bg-gray-700 text-white font-medium py-1 px-2.5 rounded-md transition-all duration-200 shadow-sm hover:shadow focus:outline-none focus:ring-1 focus:ring-gray-500 focus:ring-offset-1 text-xs;
+  }
+  
+  .btn-accent {
+    @apply bg-amber-500 hover:bg-amber-600 text-white font-medium py-1 px-2.5 rounded-md transition-all duration-200 shadow-sm hover:shadow focus:outline-none focus:ring-1 focus:ring-amber-500 focus:ring-offset-1 text-xs;
+  }
+  
+  .btn-outline {
+    @apply border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 font-medium py-1 px-2.5 rounded-md transition-all duration-200 shadow-sm hover:shadow focus:outline-none focus:ring-1 focus:ring-gray-500 focus:ring-offset-1 text-xs;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white font-medium py-1 px-2.5 rounded-md transition-all duration-200 shadow-sm hover:shadow focus:outline-none focus:ring-1 focus:ring-red-500 focus:ring-offset-1 text-xs;
+  }
+  
+  .btn-success {
+    @apply bg-green-600 hover:bg-green-700 text-white font-medium py-1 px-2.5 rounded-md transition-all duration-200 shadow-sm hover:shadow focus:outline-none focus:ring-1 focus:ring-green-500 focus:ring-offset-1 text-xs;
+  }
+  
+  /* Card Styles */
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-4 transition-all duration-200 hover:shadow-md;
+  }
+  
+  .card-elevated {
+    @apply bg-white rounded-xl shadow-md border border-gray-200 p-5 transition-all duration-200 hover:shadow-lg;
+  }
+  
+  .card-gradient {
+    @apply bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-sm border border-gray-200 p-4 transition-all duration-200 hover:shadow-md;
+  }
+  
+  /* Section Titles */
+  .section-title {
+    @apply text-xl md:text-2xl font-serif font-bold text-gray-900 mb-3;
+  }
+  
+  .section-subtitle {
+    @apply text-sm md:text-base text-gray-600 mb-4 max-w-2xl;
+  }
+  
+  /* Form Elements */
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+  }
+  
+  .input-field-sm {
+    @apply w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+  }
+  
+  .select-field {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white;
+  }
+  
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .badge-primary {
+    @apply bg-blue-100 text-blue-800;
+  }
+  
+  .badge-secondary {
+    @apply bg-gray-100 text-gray-800;
+  }
+  
+  .badge-success {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .badge-warning {
+    @apply bg-amber-100 text-amber-800;
+  }
+  
+  .badge-danger {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  .badge-info {
+    @apply bg-blue-100 text-blue-800;
+  }
+  
+  /* Table Slots */
+  .table-slot-available {
+    @apply bg-green-50 border border-green-200 text-green-800 hover:bg-green-100 cursor-pointer transition-all duration-200;
+  }
+  
+  .table-slot-booked {
+    @apply bg-red-50 border border-red-200 text-red-800 cursor-not-allowed opacity-75;
+  }
+  
+  .table-slot-unavailable {
+    @apply bg-gray-100 border border-gray-200 text-gray-500 cursor-not-allowed;
+  }
+  
+  /* Animations */
+  .animate-spin-once {
+    animation: spin 1s ease-in-out;
+  }
+  
+  .fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  .slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  /* Admin Dashboard Specific Styles */
+  .admin-dashboard {
+    @apply min-h-screen bg-gray-50;
+  }
+  
+  .admin-container {
+    @apply max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .admin-header {
+    @apply bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+  
+  .admin-page-title {
+    @apply text-xl sm:text-2xl font-serif font-bold text-gray-900 flex items-center gap-2;
+  }
+  
+  .admin-page-title-icon {
+    @apply p-2 bg-blue-100 rounded-lg;
+  }
+  
+  /* Admin Cards - Compact */
+  .admin-card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-4 transition-all duration-200 hover:shadow-md;
+  }
+  
+  .admin-card-header {
+    @apply flex items-center justify-between mb-3 pb-2 border-b border-gray-100;
+  }
+  
+  .admin-card-title {
+    @apply text-base font-semibold text-gray-900 flex items-center gap-2;
+  }
+  
+  .admin-card-actions {
+    @apply flex items-center gap-1.5;
+  }
+  
+  .admin-stat-card {
+    @apply bg-white rounded-lg border border-gray-200 p-4 shadow-sm transition-all duration-200 hover:shadow-md;
+  }
+  
+  .admin-stat-value {
+    @apply text-xl font-bold text-gray-900;
+  }
+  
+  .admin-stat-label {
+    @apply text-xs text-gray-600 mt-1;
+  }
+  
+  .admin-stat-trend {
+    @apply flex items-center text-xs mt-1.5;
+  }
+  
+  .admin-stat-trend.up {
+    @apply text-green-600;
+  }
+  
+  .admin-stat-trend.down {
+    @apply text-red-600;
+  }
+  
+  /* Admin Forms - Compact */
+  .admin-form-group {
+    @apply mb-3;
+  }
+  
+  .admin-form-label {
+    @apply block text-xs font-medium text-gray-700 mb-1;
+  }
+  
+  .admin-form-control {
+    @apply w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+  }
+  
+  .admin-form-control:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .admin-form-row {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-3;
+  }
+  
+  /* Admin Buttons - Extra Compact */
+  .admin-btn {
+    @apply inline-flex items-center gap-1 font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-offset-1;
+  }
+  
+  .admin-btn-sm {
+    @apply px-2 py-0.5 text-xs;
+  }
+  
+  .admin-btn-md {
+    @apply px-2.5 py-1 text-xs;
+  }
+  
+  .admin-btn-lg {
+    @apply px-3 py-1.5 text-sm;
+  }
+  
+  .admin-btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500 shadow-sm hover:shadow;
+  }
+  
+  .admin-btn-secondary {
+    @apply bg-gray-600 hover:bg-gray-700 text-white focus:ring-gray-500 shadow-sm hover:shadow;
+  }
+  
+  .admin-btn-success {
+    @apply bg-green-600 hover:bg-green-700 text-white focus:ring-green-500 shadow-sm hover:shadow;
+  }
+  
+  .admin-btn-warning {
+    @apply bg-amber-500 hover:bg-amber-600 text-white focus:ring-amber-500 shadow-sm hover:shadow;
+  }
+  
+  .admin-btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white focus:ring-red-500 shadow-sm hover:shadow;
+  }
+  
+  .admin-btn-outline {
+    @apply border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-gray-500 shadow-sm hover:shadow;
+  }
+  
+  /* Admin Tables - Compact */
+  .admin-table-container {
+    @apply overflow-hidden rounded-lg border border-gray-200 shadow-sm;
+  }
+  
+  .admin-table {
+    @apply min-w-full divide-y divide-gray-200;
+  }
+  
+  .admin-table-thead {
+    @apply bg-gray-50;
+  }
+  
+  .admin-table-th {
+    @apply px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+  }
+  
+  .admin-table-td {
+    @apply px-3 py-2 text-xs text-gray-900;
+  }
+  
+  .admin-table-tr {
+    @apply bg-white hover:bg-gray-50 transition-colors duration-150;
+  }
+  
+  .admin-table-tr:nth-child(even) {
+    @apply bg-gray-50/50;
+  }
+  
+  .admin-table-tr:nth-child(even):hover {
+    @apply bg-gray-100;
+  }
+  
+  /* Admin Status Indicators - Compact */
+  .admin-status-badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .admin-status-active {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .admin-status-inactive {
+    @apply bg-gray-100 text-gray-800;
+  }
+  
+  .admin-status-pending {
+    @apply bg-amber-100 text-amber-800;
+  }
+  
+  .admin-status-error {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  .admin-status-success {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .admin-status-warning {
+    @apply bg-amber-100 text-amber-800;
+  }
+  
+  /* Admin Alerts - Compact */
+  .admin-alert {
+    @apply rounded-lg p-3 mb-3 border-l-4;
+  }
+  
+  .admin-alert-info {
+    @apply bg-blue-50 border-blue-400 text-blue-800;
+  }
+  
+  .admin-alert-success {
+    @apply bg-green-50 border-green-400 text-green-800;
+  }
+  
+  .admin-alert-warning {
+    @apply bg-amber-50 border-amber-400 text-amber-800;
+  }
+  
+  .admin-alert-error {
+    @apply bg-red-50 border-red-400 text-red-800;
+  }
+  
+  .admin-alert-content {
+    @apply flex items-start gap-2;
+  }
+  
+  .admin-alert-icon {
+    @apply flex-shrink-0 mt-0.5 w-4 h-4;
+  }
+  
+  .admin-alert-text {
+    @apply flex-1;
+  }
+  
+  .admin-alert-title {
+    @apply font-medium text-sm mb-0.5;
+  }
+  
+  .admin-alert-description {
+    @apply text-xs opacity-90;
+  }
+  
+  /* Admin Navigation */
+  .admin-breadcrumb {
+    @apply flex items-center text-xs text-gray-600 mb-4;
+  }
+  
+  .admin-breadcrumb-item {
+    @apply flex items-center;
+  }
+  
+  .admin-breadcrumb-divider {
+    @apply mx-2 text-gray-400;
+  }
+  
+  .admin-breadcrumb-current {
+    @apply text-gray-900 font-medium;
+  }
+  
+  /* Admin Layout Components */
+  .admin-section {
+    @apply mb-6;
+  }
+  
+  .admin-section-header {
+    @apply flex items-center justify-between mb-3;
+  }
+  
+  .admin-section-title {
+    @apply text-base font-semibold text-gray-900;
+  }
+  
+  .admin-grid {
+    @apply grid gap-4;
+  }
+  
+  .admin-grid-cols-1 {
+    @apply grid-cols-1;
+  }
+  
+  .admin-grid-cols-2 {
+    @apply grid-cols-1 sm:grid-cols-2;
+  }
+  
+  .admin-grid-cols-3 {
+    @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
+  }
+  
+  .admin-grid-cols-4 {
+    @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-4;
+  }
+  
+  /* Admin Utility Classes */
+  .admin-loading-spinner {
+    @apply animate-spin h-4 w-4 text-blue-600;
+  }
+  
+  .admin-empty-state {
+    @apply text-center py-8 text-gray-500;
+  }
+  
+  .admin-empty-state-icon {
+    @apply mx-auto h-10 w-10 text-gray-400 mb-3;
+  }
+  
+  .admin-empty-state-title {
+    @apply text-base font-medium text-gray-900 mb-1;
+  }
+  
+  .admin-empty-state-description {
+    @apply text-sm text-gray-500;
+  }
+  
+  .admin-toolbar {
+    @apply flex flex-col sm:flex-row gap-2 sm:items-center justify-between mb-4;
+  }
+  
+  .admin-toolbar-actions {
+    @apply flex items-center gap-1.5 flex-wrap;
+  }
+  
+  .admin-toolbar-filters {
+    @apply flex items-center gap-2 flex-wrap;
+  }
+  
+  /* Admin Modal - Compact */
+  .admin-modal-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+  }
+  
+  .admin-modal {
+    @apply bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden;
+  }
+  
+  .admin-modal-header {
+    @apply px-5 py-3 border-b border-gray-200 flex items-center justify-between;
+  }
+  
+  .admin-modal-title {
+    @apply text-base font-semibold text-gray-900;
+  }
+  
+  .admin-modal-close {
+    @apply text-gray-400 hover:text-gray-600 transition-colors w-5 h-5;
+  }
+  
+  .admin-modal-body {
+    @apply p-5 overflow-y-auto max-h-[calc(90vh-120px)];
+  }
+  
+  .admin-modal-footer {
+    @apply px-5 py-3 border-t border-gray-200 flex items-center justify-end gap-2;
+  }
+  
+  /* Admin Sidebar - Compact */
+  .admin-sidebar {
+    @apply w-56 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 overflow-y-auto;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .admin-sidebar-header {
+    @apply p-4 border-b border-gray-200;
+  }
+  
+  .admin-sidebar-nav {
+    @apply p-3;
+  }
+  
+  .admin-sidebar-item {
+    @apply flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200 mb-1;
+  }
+  
+  .admin-sidebar-item.active {
+    @apply bg-blue-100 text-blue-700 font-medium;
+  }
+  
+  .admin-sidebar-item-icon {
+    @apply w-4 h-4;
+  }
+  
+  /* Icon Sizes - Compact */
+  .admin-icon-xs {
+    @apply w-3 h-3;
+  }
+  
+  .admin-icon-sm {
+    @apply w-4 h-4;
+  }
+  
+  .admin-icon-md {
+    @apply w-5 h-5;
+  }
+  
+  .admin-icon-lg {
+    @apply w-6 h-6;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .admin-toolbar {
+      @apply flex-col items-stretch gap-3;
+    }
+    
+    .admin-toolbar-actions,
+    .admin-toolbar-filters {
+      @apply w-full;
+    }
+    
+    .admin-card {
+      @apply p-3;
+    }
+    
+    .admin-table-th,
+    .admin-table-td {
+      @apply px-2 py-1.5;
+    }
+    
+    .admin-page-title {
+      @apply text-lg;
+    }
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseAdmin {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.admin-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.admin-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.admin-pulse {
+  animation: pulseAdmin 2s infinite;
+}
+
+.admin-bounce-in {
+  animation: bounceIn 0.4s ease-out;
+}

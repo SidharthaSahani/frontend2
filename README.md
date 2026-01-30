@@ -104,11 +104,11 @@ The admin panel now supports uploading images from your device for food menu ite
 
 The admin panel now includes enhanced security features:
 
-1. **Session Timeout**: Admin sessions automatically expire after 15 minutes of inactivity
+1. **Session Timeout**: Admin sessions automatically expire after 23 hours of inactivity
 2. **Activity Monitoring**: User activity (mouse movement, keyboard input, clicks, scrolling) resets the session timer
-3. **Session Warning**: A warning notification appears 1 minute before session expiration
+3. **Session Warning**: A warning notification appears 1 hour before session expiration
 4. **Automatic Logout**: Users are automatically logged out when the session expires
-5. **Session Persistence**: Sessions persist across browser refreshes within the 15-minute window
+5. **Session Persistence**: Sessions persist across browser refreshes within the 23-hour window
 
 ## Admin Access
 
