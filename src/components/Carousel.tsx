@@ -1,23 +1,34 @@
 import { useState, useEffect } from 'react';
 
+interface CarouselImage {
+  id: string;
+  url: string;
+  createdAt: string;
+}
+
 interface CarouselProps {
-  images: string[];
+  images: CarouselImage[] | string[];
 }
 
 export default function Carousel({ images }: CarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Convert images to consistent format
+  const imageUrls = images.map(img => 
+    typeof img === 'string' ? img : img.url
+  );
+
   useEffect(() => {
-    if (images.length === 0) return;
+    if (imageUrls.length === 0) return;
     
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % imageUrls.length);
     }, 3000); // Change image every 3 seconds
 
     return () => clearInterval(interval);
-  }, [images]);
+  }, [imageUrls]);
 
-  if (images.length === 0) {
+  if (imageUrls.length === 0) {
     return (
       <div className="w-full max-w-6xl mx-auto h-64 md:h-96 rounded-xl flex items-center justify-center">
         <div className="text-white text-center p-4">
@@ -31,7 +42,7 @@ export default function Carousel({ images }: CarouselProps) {
   return (
     <div className="w-full max-w-6xl mx-auto rounded-xl overflow-hidden shadow-xl">
       <div className="relative w-full h-64 md:h-96">
-        {images.map((image, index) => (
+        {imageUrls.map((imageUrl, index) => (
           <div
             key={index}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
@@ -39,7 +50,7 @@ export default function Carousel({ images }: CarouselProps) {
             }`}
           >
             <img
-              src={image}
+              src={imageUrl}
               alt={`Restaurant view ${index + 1}`}
               className="w-full h-full object-cover"
               onError={(e) => {
@@ -52,7 +63,7 @@ export default function Carousel({ images }: CarouselProps) {
 
         {/* Navigation dots */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-          {images.map((_, index) => (
+          {imageUrls.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}

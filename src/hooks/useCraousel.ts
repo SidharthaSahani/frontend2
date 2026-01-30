@@ -3,11 +3,11 @@
 // Carousel images don't change frequently, so no auto-refresh needed
 // ============================================
 import { useState, useEffect } from 'react';
-import { carouselService } from '../services/carouselService';
+import { carouselService, type CarouselImage } from '../services/carouselService';
 import { toast } from 'react-toastify';
 
 export const useCarousel = () => {
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<CarouselImage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,11 +45,11 @@ export const useCarousel = () => {
     }
   };
 
-  const deleteImage = async (index: number) => {
+  const deleteImage = async (id: string) => {
     try {
       setIsLoading(true);
       setError(null);
-      const newImages = await carouselService.deleteImage(index);
+      const newImages = await carouselService.deleteImage(id);
       setImages(newImages);
       toast.success('Image deleted successfully!');
     } catch (err) {
@@ -63,11 +63,11 @@ export const useCarousel = () => {
     }
   };
 
-  const updateImage = async (index: number, file: File) => {
+  const updateImage = async (id: string, file: File) => {
     try {
       setIsLoading(true);
       setError(null);
-      const newImages = await carouselService.updateImage(index, file);
+      const newImages = await carouselService.updateImage(id, file);
       setImages(newImages);
       toast.success('Image updated successfully!');
     } catch (err) {

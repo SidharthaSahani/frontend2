@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { tablesApi, bookingsApi, RestaurantTable, Booking, API_BASE_URL } from '../lib/api';
-import { carouselService } from '../services/carouselService';
+import { carouselService, type CarouselImage } from '../services/carouselService';
 import TableGrid from './TableGrid';
 import BookingForm, { BookingFormData } from './BookingForm';
 import FoodMenu from './FoodMenu';
@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 export default function UserBooking() {
   const [tables, setTables] = useState<RestaurantTable[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [carouselImages, setCarouselImages] = useState<string[]>([]);
+  const [carouselImages, setCarouselImages] = useState<CarouselImage[]>([]);
   const [selectedTable, setSelectedTable] = useState<RestaurantTable | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
@@ -60,20 +60,25 @@ export default function UserBooking() {
     try {
       const images = await carouselService.getImages();
       // Validate that images is an array before setting
-      setCarouselImages(Array.isArray(images) ? images : [
-        'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1552566626-52f8b828add9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1554679665-f5537f187268?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
-      ]);
+      if (Array.isArray(images) && images.length > 0) {
+        setCarouselImages(images);
+      } else {
+        // Fallback to sample images if no images found
+        setCarouselImages([
+          { id: '', url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', createdAt: '' },
+          { id: '', url: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', createdAt: '' },
+          { id: '', url: 'https://images.unsplash.com/photo-1554679665-f5537f187268?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', createdAt: '' },
+          { id: '', url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', createdAt: '' }
+        ]);
+      }
     } catch (error) {
       toast.warn('Failed to load carousel images. Using default images.');
       // Fallback to sample images if API fails
       setCarouselImages([
-        'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1552566626-52f8b828add9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1554679665-f5537f187268?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
+        { id: '', url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', createdAt: '' },
+        { id: '', url: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', createdAt: '' },
+        { id: '', url: 'https://images.unsplash.com/photo-1554679665-f5537f187268?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', createdAt: '' },
+        { id: '', url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', createdAt: '' }
       ]);
     }
   };

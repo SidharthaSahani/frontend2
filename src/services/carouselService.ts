@@ -9,9 +9,15 @@ const FALLBACK_IMAGES = [
   'https://images.unsplash.com/photo-1554679665-f5537f187268?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
 ];
 
+interface CarouselImage {
+  id: string;
+  url: string;
+  createdAt: string;
+}
+
 export const carouselService = {
   // Get all carousel images
-  async getImages(): Promise<string[]> {
+  async getImages(): Promise<CarouselImage[]> {
     try {
       const response = await fetch(`${API_BASE_URL}/api/carousel-images`, {
         method: 'GET',
@@ -23,28 +29,29 @@ export const carouselService = {
       if (response.ok) {
         const data = await response.json();
         
-        
         // Handle response format: { success: true, data: [...] }
         const images = data.data || data.images || data;
         
         if (Array.isArray(images) && images.length > 0) {
-          return images;
+          // Convert to CarouselImage format if needed
+          return images.map((img: any) => 
+            typeof img === 'string' 
+              ? { id: '', url: img, createdAt: '' } 
+              : img
+          );
         }
       }
       
-
-      return FALLBACK_IMAGES;
+      // Return fallback with empty IDs
+      return FALLBACK_IMAGES.map(url => ({ id: '', url, createdAt: '' }));
     } catch (error) {
-
-      return FALLBACK_IMAGES;
+      return FALLBACK_IMAGES.map(url => ({ id: '', url, createdAt: '' }));
     }
   },
 
   // ✅ FIXED: Upload single carousel image
-  async uploadImage(file: File): Promise<string[]> {
+  async uploadImage(file: File): Promise<CarouselImage[]> {
     try {
-
-      
       const formData = new FormData();
       formData.append('image', file);
 
@@ -64,8 +71,6 @@ export const carouselService = {
         body: formData,
       });
 
-
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         
@@ -74,21 +79,17 @@ export const carouselService = {
 
       const result = await response.json();
 
-      
       // Extract images from response
       const images = result.data?.images || result.images || [];
       return Array.isArray(images) && images.length > 0 ? images : await this.getImages();
     } catch (error) {
-
       throw error;
     }
   },
 
   // Update all carousel images
-  async updateImages(images: string[]): Promise<string[]> {
+  async updateImages(images: string[]): Promise<CarouselImage[]> {
     try {
-
-      
       // Get admin token from localStorage
       const token = localStorage.getItem('adminToken');
       const headers: Record<string, string> = { 
@@ -113,17 +114,15 @@ export const carouselService = {
 
       const result = await response.json();
 
-      
       const updatedImages = result.data?.images || result.images || [];
       return Array.isArray(updatedImages) ? updatedImages : [];
     } catch (error) {
-
       throw error;
     }
   },
 
-  // Delete carousel image by index
-  async deleteImage(index: number): Promise<string[]> {
+  // Delete carousel image by ID
+  async deleteImage(id: string): Promise<CarouselImage[]> {
     try {
       // Use the same approach as other API calls in the application
       const token = localStorage.getItem('adminToken');
@@ -134,7 +133,7 @@ export const carouselService = {
         headers['Authorization'] = `Bearer ${token}`;
       }
       
-      const response = await fetch(`${API_BASE_URL}/api/carousel-images/${index}`, {
+      const response = await fetch(`${API_BASE_URL}/api/carousel-images/${id}`, {
         method: 'DELETE',
         headers: headers,
       });
@@ -152,20 +151,16 @@ export const carouselService = {
 
       const result = await response.json();
 
-      
       const updatedImages = result.data?.images || result.images || [];
       return Array.isArray(updatedImages) ? updatedImages : [];
     } catch (error) {
-
       throw error;
     }
   },
 
-  // Update single carousel image by index
-  async updateImage(index: number, file: File): Promise<string[]> {
+  // Update single carousel image by ID
+  async updateImage(id: string, file: File): Promise<CarouselImage[]> {
     try {
-
-      
       const formData = new FormData();
       formData.append('image', file);
 
@@ -178,7 +173,7 @@ export const carouselService = {
         headers['Authorization'] = `Bearer ${token}`;
       }
       
-      const response = await fetch(`${API_BASE_URL}/api/carousel-images/${index}`, {
+      const response = await fetch(`${API_BASE_URL}/api/carousel-images/${id}`, {
         method: 'PUT',
         headers: headers,
         body: formData,
@@ -191,11 +186,9 @@ export const carouselService = {
 
       const result = await response.json();
 
-      
       const updatedImages = result.data?.images || result.images || [];
       return Array.isArray(updatedImages) ? updatedImages : [];
     } catch (error) {
-
       throw error;
     }
   }

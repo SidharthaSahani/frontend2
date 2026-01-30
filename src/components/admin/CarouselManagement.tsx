@@ -3,12 +3,13 @@
 import { useRef } from 'react';
 import { Upload, RefreshCw } from 'lucide-react';
 import { useCarousel } from '../../hooks/useCraousel';
+import type { CarouselImage } from '../../services/carouselService';
 
 export const CarouselManagement = () => {
   const { images, isLoading, uploadImage, deleteImage, updateImage, fetchImages } = useCarousel();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const replaceFileInputRef = useRef<HTMLInputElement>(null);
-  const replaceIndexRef = useRef<number>(-1);
+  const replaceIndexRef = useRef<string>('');
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -22,29 +23,29 @@ export const CarouselManagement = () => {
     }
   };
 
-  const handleReplaceImage = (index: number) => {
-    replaceIndexRef.current = index;
+  const handleReplaceImage = (image: CarouselImage) => {
+    replaceIndexRef.current = image.id;
     replaceFileInputRef.current?.click();
   };
 
   const handleReplaceImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    const index = replaceIndexRef.current;
+    const id = replaceIndexRef.current;
 
-    if (!file || index < 0) return;
+    if (!file || !id) return;
 
     try {
-      await updateImage(index, file);
+      await updateImage(id, file);
       if (replaceFileInputRef.current) replaceFileInputRef.current.value = '';
-      replaceIndexRef.current = -1;
+      replaceIndexRef.current = '';
     } catch (error) {
       console.error('Failed to replace image:', error);
     }
   };
 
-  const handleDeleteImage = async (index: number) => {
+  const handleDeleteImage = async (image: CarouselImage) => {
     try {
-      await deleteImage(index);
+      await deleteImage(image.id);
     } catch (error) {
       console.error('Failed to delete image:', error);
     }
@@ -89,9 +90,9 @@ export const CarouselManagement = () => {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {images && Array.isArray(images) && images.map((image, index) => (
-          <div key={index} className="relative group">
+          <div key={image.id || index} className="relative group">
             <img
-              src={image}
+              src={image.url}
               alt={`Carousel ${index + 1}`}
               className="w-full h-32 object-cover rounded-lg shadow"
               onError={(e) => {
@@ -101,13 +102,13 @@ export const CarouselManagement = () => {
             <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <div className="flex gap-2">
                 <button
-                  onClick={() => handleReplaceImage(index)}
+                  onClick={() => handleReplaceImage(image)}
                   className="bg-white text-purple-600 px-2 py-1 rounded text-sm font-medium hover:bg-gray-100"
                 >
                   Update
                 </button>
                 <button
-                  onClick={() => handleDeleteImage(index)}
+                  onClick={() => handleDeleteImage(image)}
                   className="bg-red-500 text-white px-2 py-1 rounded text-sm font-medium hover:bg-red-600"
                 >
                   Delete
